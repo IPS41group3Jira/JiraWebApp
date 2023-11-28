@@ -1,5 +1,6 @@
 package com.gptp.jirawebapp.components.issue;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gptp.jirawebapp.components.project.ProjectDto;
 import com.gptp.jirawebapp.components.user.UserDto;
 import com.gptp.jirawebapp.data.Attachment;
@@ -36,7 +37,9 @@ public class SavedIssueDto {
 
     private IssueStatus status;
 
+    @JsonIgnore
     private Set<Attachment> attachments;
 
+    @JsonIgnore
     private Set<CommentDto> comments;
 }

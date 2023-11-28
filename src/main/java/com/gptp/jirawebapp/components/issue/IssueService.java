@@ -81,10 +81,10 @@ public class IssueService {
     }
 
     public List<IssueDto> listByProject(Long projectId) {
-        return issueRepository.findAllByProject(projectId);
+        return issueRepository.findByProjectId(projectId);
     }
 
     public List<IssueDto> listByAssignee(Long userId) {
-        return issueRepository.findAllByAssignee(userId);
+        return issueRepository.findByAssigneeId(userId);
     }
 }

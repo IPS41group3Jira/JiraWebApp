@@ -13,6 +13,8 @@ import java.util.Date;
 @AllArgsConstructor
 public class IssueDto {
 
+    private Long id;
+
     @NonNull
     private String name;
 
