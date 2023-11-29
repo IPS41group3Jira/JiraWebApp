@@ -34,12 +34,11 @@ public class IssueService {
         Issue issue = issueRepository.findById(id).orElseThrow(EntityNotFoundException::new);
         issue.setName(newIssue.getName());
         issue.setDescription(newIssue.getDescription());
-        issue.setProject(newIssue.getProject());
         issue.setDueDate(newIssue.getDueDate());
         issue.setPriority(newIssue.getPriority());
         issue.setAssignee(newIssue.getAssignee());
         issue.setStatus(newIssue.getStatus());
-        return toSavedIssueDto(issue);
+        return toSavedIssueDto(issueRepository.save(issue));
     }
 
     public String delete(Long id) {
