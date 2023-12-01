@@ -65,6 +65,12 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
+    @GetMapping("/")
+    public ResponseEntity<?> getByFullName(@RequestParam String like) { //TODO: change endpoint
+        List<UserDto> users= repository.findByFullName(like);
+        return ResponseEntity.ok(users);
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody UserDto data) {
         UserDto user = repository.findById(id).orElseThrow();
