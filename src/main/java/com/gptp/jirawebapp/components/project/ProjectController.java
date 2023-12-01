@@ -4,12 +4,14 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/api/project")
 @AllArgsConstructor
 public class ProjectController {
+    private final ProjectRepository repository;
     private final ProjectService projectService;
 
     @GetMapping("/{id}")
@@ -19,6 +21,12 @@ public class ProjectController {
         } catch (NoSuchElementException e) {
             return ResponseEntity.badRequest().build();
         }
+    }
+
+    @GetMapping("/")
+    public ResponseEntity<?> getByNameSimilarity(@RequestParam String like) {
+        List<ProjectDto> projects = repository.findByNameSimilarity(like);
+        return ResponseEntity.ok(projects);
     }
 
     @PostMapping
