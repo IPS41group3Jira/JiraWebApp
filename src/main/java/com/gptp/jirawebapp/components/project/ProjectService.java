@@ -45,9 +45,9 @@ public class ProjectService {
         JWTContent context = jwt.context();
         Long userId = context.getUserId();
         ProjectDto projectDto = repository.findById(id).orElseThrow();
-        Long ownerRoleId = roleRepository.findOwnerRoleId().orElseThrow();
+        Long participantRolaId = roleRepository.findParticipantRoleId().orElseThrow();
         boolean canModify = projectUserRepository.findByProjectIdAndUserId(id, userId).stream()
-                .anyMatch(dto -> dto.getRole().getId().equals(ownerRoleId));
+                .anyMatch(dto -> !dto.getRole().getId().equals(participantRolaId));
         return new ProjectWithAccess(projectDto, canModify);
     }
 
