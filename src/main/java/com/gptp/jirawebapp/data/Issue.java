@@ -26,7 +26,7 @@ public class Issue {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "description")
+    @Column(name = "description", nullable = true)
     private String description;
 
     @ManyToOne
@@ -48,7 +48,7 @@ public class Issue {
     private Integer priority;
 
     @ManyToOne
-    @JoinColumn(name = "assignee_id")
+    @JoinColumn(name = "assignee_id", nullable = true)
     private UserDto assignee;
 
     @Enumerated(EnumType.STRING)

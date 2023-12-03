@@ -1,5 +1,6 @@
 package com.gptp.jirawebapp.components.project;
 
+import com.gptp.jirawebapp.components.issue.IssueRepository;
 import com.gptp.jirawebapp.components.projectUser.ProjectUserDto;
 import com.gptp.jirawebapp.components.projectUser.ProjectUserId;
 import com.gptp.jirawebapp.components.projectUser.ProjectUserRepository;
@@ -7,6 +8,7 @@ import com.gptp.jirawebapp.components.role.RoleDto;
 import com.gptp.jirawebapp.components.role.RoleRepository;
 import com.gptp.jirawebapp.components.user.UserDto;
 import com.gptp.jirawebapp.components.user.UserRepository;
+import com.gptp.jirawebapp.data.Issue;
 import com.gptp.jirawebapp.utilities.JWT;
 import com.gptp.jirawebapp.utilities.JWTContent;
 import jakarta.transaction.Transactional;
@@ -20,17 +22,21 @@ public class ProjectService {
     private final ProjectRepository repository;
     private final UserRepository userRepository;
     private final ProjectUserRepository projectUserRepository;
+    private final IssueRepository issueRepository;
     private final RoleRepository roleRepository;
+
     private final JWT jwt;
 
     public ProjectService(ProjectRepository repository,
                           UserRepository userRepository,
                           ProjectUserRepository projectUserRepository,
+                          IssueRepository issueRepository,
                           RoleRepository roleRepository,
                           JWT jwt) {
         this.repository = repository;
         this.userRepository = userRepository;
         this.projectUserRepository = projectUserRepository;
+        this.issueRepository = issueRepository;
         this.roleRepository = roleRepository;
         this.jwt = jwt;
     }
@@ -95,6 +101,17 @@ public class ProjectService {
 
     public String removeUserFromProject(Long projectId, Long userId) {
         projectUserRepository.deleteById(new ProjectUserId(projectId, userId));
+        UserDto assignee = userRepository.findById(userId).orElse(null);
+        ProjectDto project = repository.findById(projectId).orElse(null);
+
+        if (!assignee.equals(null) && !project.equals(null)) {
+            List<Issue> issues =  issueRepository.findAllByAssigneeIdAndProject_Id(userId, projectId);
+            for (Issue issue : issues) {
+                issue.setAssignee(null);
+                issueRepository.save(issue);
+            }
+        }
+        
         return "OK";
     }
 }
