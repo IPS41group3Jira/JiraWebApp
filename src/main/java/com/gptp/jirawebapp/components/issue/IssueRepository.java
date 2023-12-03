@@ -8,9 +8,9 @@ import java.util.List;
 
 @Repository
 public interface IssueRepository extends JpaRepository<Issue, Long> {
-    List<IssueDto> findByProjectId(Long projectId);
+    List<Issue> findByProjectId(Long projectId);
 
-    List<IssueDto> findByAssigneeId(Long assigneeId);
+    List<Issue> findByAssigneeId(Long assigneeId);
 
     List<Issue> findAllByAssigneeIdAndProject_Id(Long assigneeId, Long projectId);
 }

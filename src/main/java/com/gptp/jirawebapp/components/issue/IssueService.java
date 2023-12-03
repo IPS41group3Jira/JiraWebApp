@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -62,7 +63,7 @@ public class IssueService {
                 .build();
     }
 
-    private SavedIssueDto toSavedIssueDto(Issue issue) {
+    private static SavedIssueDto toSavedIssueDto(Issue issue) {
         return SavedIssueDto.builder()
                 .id(issue.getId())
                 .name(issue.getName())
@@ -79,11 +80,11 @@ public class IssueService {
                 .build();
     }
 
-    public List<IssueDto> listByProject(Long projectId) {
-        return issueRepository.findByProjectId(projectId);
+    public List<SavedIssueDto> listByProject(Long projectId) {
+        return issueRepository.findByProjectId(projectId).stream().map(IssueService::toSavedIssueDto).collect(Collectors.toList());
     }
 
-    public List<IssueDto> listByAssignee(Long userId) {
-        return issueRepository.findByAssigneeId(userId);
+    public List<SavedIssueDto> listByAssignee(Long userId) {
+        return issueRepository.findByAssigneeId(userId).stream().map(IssueService::toSavedIssueDto).collect(Collectors.toList());
     }
 }
