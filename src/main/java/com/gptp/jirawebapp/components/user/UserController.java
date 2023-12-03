@@ -92,4 +92,16 @@ public class UserController {
 
         return ResponseEntity.ok(projects);
     }
+
+    @GetMapping("/{id}/projects")
+    public ResponseEntity<?> listUserProjects(@PathVariable Long id) {
+
+        List<ProjectUserDto> projectUserRoles = projectUserRepository.findByUserId(id);
+
+        List<?> projects = projectUserRoles.stream()
+                .map(ProjectUserDto::getProject)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(projects);
+    }
 }
