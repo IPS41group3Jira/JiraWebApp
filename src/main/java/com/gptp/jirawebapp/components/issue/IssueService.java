@@ -49,7 +49,10 @@ public class IssueService {
 
     private Issue toIssue(Long userId, IssueDto dto) throws EntityNotFoundException {
         ProjectDto project = projectRepository.findById(dto.getProjectId()).orElseThrow(EntityNotFoundException::new);
-        UserDto assignee = userRepository.findById(dto.getAssigneeId()).orElse(null);
+        UserDto assignee = null;
+        if (dto.getAssigneeId() != null) {
+            assignee = userRepository.findById(dto.getAssigneeId()).orElse(null);
+        }
         return Issue.builder()
                 .name(dto.getName())
                 .description(dto.getDescription())
