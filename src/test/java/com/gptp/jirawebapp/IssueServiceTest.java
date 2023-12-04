@@ -159,18 +159,19 @@ class IssueServiceTest {
         when(projectRepository.findById(1L)).thenReturn(Optional.of(mockProjectDto()));
         when(userRepository.findById(1L)).thenReturn(Optional.of(mockUserDto()));
         when(issueRepository.findById(id)).thenReturn(Optional.of(mockIssue()));
+        when(issueRepository.save(any(Issue.class))).thenReturn(mockIssue());
 
         // Test
         SavedIssueDto savedIssueDto = issueService.update(userId, id, issueDto);
 
         // Assert
-        assertEquals("Issue name", savedIssueDto.getName());
-        assertEquals("Issue description", savedIssueDto.getDescription());
+        assertEquals("Issue name 2", savedIssueDto.getName());
+        assertEquals("Issue description 2", savedIssueDto.getDescription());
         assertEquals(1L, savedIssueDto.getProject().getId());
         assertEquals(2L, savedIssueDto.getCreatorId());
-        assertEquals(1, savedIssueDto.getPriority());
+        assertEquals(2, savedIssueDto.getPriority());
         assertEquals(1L, savedIssueDto.getAssignee().getId());
-        assertEquals(IssueStatus.IN_PROGRESS, savedIssueDto.getStatus());
+        assertEquals(IssueStatus.DONE, savedIssueDto.getStatus());
 
         // Verify interactions
         verify(projectRepository).findById(1L);
@@ -203,102 +204,102 @@ class IssueServiceTest {
     @Test
     void testByProject() {
         // Prepare
-        IssueDto issueDto1 = IssueDto.builder()
+        Issue issue1 = Issue.builder()
                 .name("Issue name 1")
                 .description("Issue description 1")
-                .projectId(1L)
+                .project(mockProjectDto())
                 .creationDate(new Date())
                 .dueDate(new Date())
                 .priority(2)
-                .assigneeId(1L)
+                .assignee(mockUserDto())
                 .status(IssueStatus.DONE)
                 .build();
-        IssueDto issueDto2 = IssueDto.builder()
+        Issue issue2 = Issue.builder()
                 .name("Issue name 2")
                 .description("Issue description 2")
-                .projectId(1L)
+                .project(mockProjectDto())
                 .creationDate(new Date())
                 .dueDate(new Date())
                 .priority(2)
-                .assigneeId(1L)
+                .assignee(mockUserDto())
                 .status(IssueStatus.DONE)
                 .build();
 
         Long projectId = 1L;
-        when(issueRepository.findAllByProject(projectId))
-                .thenReturn(List.of(issueDto1, issueDto2));
+        when(issueRepository.findByProjectId(projectId))
+                .thenReturn(List.of(issue1, issue2));
 
         // Test
-        List<IssueDto> issueDtoList = issueService.listByProject(projectId);
+        List<SavedIssueDto> issueDtoList = issueService.listByProject(projectId);
 
         // Assert
         assertEquals(2, issueDtoList.size());
         assertEquals("Issue name 1", issueDtoList.get(0).getName());
         assertEquals("Issue description 1", issueDtoList.get(0).getDescription());
-        assertEquals(1L, issueDtoList.get(0).getProjectId());
+        assertEquals(1L, issueDtoList.get(0).getProject().getId());
         assertEquals(2, issueDtoList.get(0).getPriority());
-        assertEquals(1L, issueDtoList.get(0).getAssigneeId());
+        assertEquals(1L, issueDtoList.get(0).getAssignee().getId());
         assertEquals(IssueStatus.DONE, issueDtoList.get(0).getStatus());
 
         assertEquals("Issue name 2", issueDtoList.get(1).getName());
         assertEquals("Issue description 2", issueDtoList.get(1).getDescription());
-        assertEquals(1L, issueDtoList.get(1).getProjectId());
+        assertEquals(1L, issueDtoList.get(1).getProject().getId());
         assertEquals(2, issueDtoList.get(1).getPriority());
-        assertEquals(1L, issueDtoList.get(1).getAssigneeId());
+        assertEquals(1L, issueDtoList.get(1).getAssignee().getId());
         assertEquals(IssueStatus.DONE, issueDtoList.get(1).getStatus());
 
         // Verify interactions
-        verify(issueRepository).findAllByProject(projectId);
+        verify(issueRepository).findByProjectId(projectId);
     }
 
     @Test
     void testByAssignee() {
         // Prepare
-        IssueDto issueDto1 = IssueDto.builder()
+        Issue issue1 = Issue.builder()
                 .name("Issue name 1")
                 .description("Issue description 1")
-                .projectId(1L)
+                .project(mockProjectDto())
                 .creationDate(new Date())
                 .dueDate(new Date())
                 .priority(2)
-                .assigneeId(1L)
+                .assignee(mockUserDto())
                 .status(IssueStatus.DONE)
                 .build();
-        IssueDto issueDto2 = IssueDto.builder()
+        Issue issue2 = Issue.builder()
                 .name("Issue name 2")
                 .description("Issue description 2")
-                .projectId(1L)
+                .project(mockProjectDto())
                 .creationDate(new Date())
                 .dueDate(new Date())
                 .priority(2)
-                .assigneeId(1L)
+                .assignee(mockUserDto())
                 .status(IssueStatus.DONE)
                 .build();
 
         Long userId = 1L;
-        when(issueRepository.findAllByAssignee(userId))
-                .thenReturn(List.of(issueDto1, issueDto2));
+        when(issueRepository.findByAssigneeId(userId))
+                .thenReturn(List.of(issue1, issue2));
 
         // Test
-        List<IssueDto> issueDtoList = issueService.listByAssignee(userId);
+        List<SavedIssueDto> issueDtoList = issueService.listByAssignee(userId);
 
         // Assert
         assertEquals(2, issueDtoList.size());
         assertEquals("Issue name 1", issueDtoList.get(0).getName());
         assertEquals("Issue description 1", issueDtoList.get(0).getDescription());
-        assertEquals(1L, issueDtoList.get(0).getProjectId());
+        assertEquals(1L, issueDtoList.get(0).getProject().getId());
         assertEquals(2, issueDtoList.get(0).getPriority());
-        assertEquals(1L, issueDtoList.get(0).getAssigneeId());
+        assertEquals(1L, issueDtoList.get(0).getAssignee().getId());
         assertEquals(IssueStatus.DONE, issueDtoList.get(0).getStatus());
 
         assertEquals("Issue name 2", issueDtoList.get(1).getName());
         assertEquals("Issue description 2", issueDtoList.get(1).getDescription());
-        assertEquals(1L, issueDtoList.get(1).getProjectId());
+        assertEquals(1L, issueDtoList.get(1).getProject().getId());
         assertEquals(2, issueDtoList.get(1).getPriority());
-        assertEquals(1L, issueDtoList.get(1).getAssigneeId());
+        assertEquals(1L, issueDtoList.get(1).getAssignee().getId());
         assertEquals(IssueStatus.DONE, issueDtoList.get(1).getStatus());
 
         // Verify interactions
-        verify(issueRepository).findAllByAssignee(userId);
+        verify(issueRepository).findByAssigneeId(userId);
     }
 }

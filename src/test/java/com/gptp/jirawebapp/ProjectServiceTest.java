@@ -104,6 +104,7 @@ public class ProjectServiceTest {
     public void createProject_Success() {
         // Given
         Long userId = 1L;
+        Long roleId = 1L;
         JWTContent jwtContent = mock(JWTContent.class);
         when(jwtContent.getUserId()).thenReturn(userId);
         when(jwt.context()).thenReturn(jwtContent);
@@ -112,14 +113,20 @@ public class ProjectServiceTest {
         mockUser.setId(userId);
         when(userRepository.findById(userId)).thenReturn(Optional.of(mockUser));
 
+        RoleDto role = mockRoleDto();
+        when(roleRepository.findById(roleId)).thenReturn(Optional.of(role));
+
         ProjectDto newProject = mockProjectDto();
 
         ProjectDto savedProject = mockProjectDto();
         savedProject.setId(1L);
+        when(projectRepository.findById(newProject.getId())).thenReturn(Optional.of(newProject));
         when(projectRepository.save(any(ProjectDto.class))).thenReturn(savedProject);
 
+        when(roleRepository.findOwnerRoleId()).thenReturn(Optional.of(1L));
+
         // When
-        ProjectDto result = projectService.createProject(newProject);
+        ProjectWithAccess result = projectService.createProject(newProject);
 
         // Then
         assertNotNull(result);
@@ -129,6 +136,7 @@ public class ProjectServiceTest {
         assertEquals(newProject.getStartDate(), result.getStartDate());
         assertEquals(newProject.getEndDate(), result.getEndDate());
         assertEquals(mockUser, newProject.getCreator());
+        assertTrue(result.canModify);
 
         verify(projectRepository).save(newProject);
     }
